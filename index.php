@@ -7,8 +7,16 @@
 	 */
 	
 	require "Route.php";
-	
-	Route::add('/', function () {
+	require "src/connector.inc.php";
+
+	$stmt = $conn->prepare("SELECT email FROM m_151_studentmap.users");
+	$stmt->execute();
+
+  $result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+  var_dump($result);
+
+  Route::add('/', function () {
 		include "public/view/frontpage.html";
 	});
 	
