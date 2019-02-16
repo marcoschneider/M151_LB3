@@ -33,8 +33,35 @@ $(document).ready(function () {
 
   $('#register').on("click", function () {
     register();
-  })
+  });
 });
+
+let updatePlaces = function() {
+  $.ajax({
+    type: 'POST',
+    url: ajaxUrl,
+    data: {
+      json_data: JSON.stringify({
+        trigger: 'update-places',
+      })
+    },
+    success: function(res) {
+      if (res.updated === true) {
+        for (let i = 0; i < res.places.length; i++) {
+          let place = res.places[i];
+          M.toast({
+            html: `${place}`,
+            classes: 'green'
+          });
+        }
+      }
+    },
+    error: function (e) {
+      console.log(e);
+      $('#output-error').html(e.responseText);
+    }
+  });
+};
 
 let setupForm = function(e) {
   let target = $(e.target);
@@ -80,10 +107,16 @@ let addStudents = function() {
       if (res === true) {
         loadStudents();
         M.updateTextFields();
-        toastr.success("Student wurde hinzugefügt!");
+        M.toast({
+          html: 'Student wurde hinzugefügt!',
+          classes: 'green'
+        });
       }else{
         for (let i = 0; i < res.length; i++) {
-          toastr.error(res[i]);
+          M.toast({
+            html: res,
+            classes: 'red'
+          });
         }
       }
     },
@@ -135,6 +168,8 @@ let getAllStudents = function(callback) {
   });
 };
 
+
+
 function outputStudentsTable(res) {
   let output = '';
   if (res.length === 0) {
@@ -169,9 +204,15 @@ let deleteStudent = function(studentId) {
     success: function (res) {
       if (res === true) {
         loadStudents();
-        toastr.success("Student wurde gelöscht!");
+        M.toast({
+          html: 'Student wurde gelöscht!',
+          classes: 'green'
+        });
       }else{
-        toastr.error(res);
+        M.toast({
+          html: res,
+          classes: 'red'
+        });
       }
     },
     error: function (e) {
@@ -198,9 +239,15 @@ let editStudent = function(studentId) {
     success: function (res) {
       if (res === true) {
         loadStudents();
-        toastr.success("Student wurde erfolgreich bearbeitet!");
+        M.toast({
+          html: 'Student wurde bearbeitet!',
+          classes: 'green'
+        });
       }else{
-        toastr.error(res);
+        M.toast({
+          html: res,
+          classes: 'red'
+        });
       }
     },
     error: function (e) {
@@ -224,7 +271,10 @@ let login = function () {
     })},
     success:function (res) {
       if (res !== true) {
-        toastr.error("Benutzername oder Passwort falsch");
+        M.toast({
+          html: "Benutzername oder Passwort falsch",
+          classes: 'red'
+        });
       }
     },
     error:function (e) {
@@ -247,10 +297,16 @@ let register = function () {
     })},
     success: function (res) {
       if (res === true) {
-        toastr.success("Dein Konto wurde erstellt!");
+        M.toast({
+          html: "Dein Konto wurde erstellt!",
+          classes: 'green'
+        });
       }else{
         for (let i = 0; i < res.length; i++) {
-          toastr.error(res[i]);
+          M.toast({
+            html: res[i],
+            classes: 'red'
+          });
         }
       }
     },

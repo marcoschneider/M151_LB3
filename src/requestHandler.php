@@ -1,9 +1,11 @@
 <?php
 	
 	// Includes
+	require "../vendor/autoload.php";
 	require "Ajax.php";
 	require "Logger.php";
 	require "connector.inc.php";
+	require "service/GetPlacesService.php";
 	require "controller/LoginController.php";
 	require "controller/RegisterController.php";
 	require "controller/StudentsController.php";
@@ -16,7 +18,8 @@
 			new LoginController($database, $logger),
 			new StudentsModel($database, new StudentsController(), $logger),
 			new RegisterController($database, $logger),
-			new PlacesModel($database, $logger)
+			new PlacesModel($database, $logger),
+			new GetPlacesService($database, $logger)
 		);
 		$result = $ajax->getRequest();
 		echo $result;

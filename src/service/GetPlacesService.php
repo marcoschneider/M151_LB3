@@ -1,6 +1,7 @@
 <?php
 	
-	use \GuzzleHttp\Client;
+	use GuzzleHttp\Client;
+	use GuzzleHttp\Exception\GuzzleException;
 	
 	class GetPlacesService
 	{
@@ -15,7 +16,7 @@
 			$this->logger = $logger;
 		}
 		
-		private function getPlacesFromStudentsToUpdate() {
+		public function getPlacesFromStudentsToUpdate() {
 			$sql = '
 				SELECT
 					place.placeid,
@@ -29,6 +30,9 @@
 			$stmt = $this->database->query($sql);
 			$places = $stmt->fetchAll();
 			if ($places) {
+				if (isset($_GET['format']) && $_GET['format'] === 'json') {
+					return json_encode($places);
+				}
 				return $places;
 			}
 			return false;
@@ -42,7 +46,11 @@
 				foreach ($places as $place) {
 					// Setzt die optionen für die Schnittstellenanfrage.
 					$client = new Client();
-					$response = $client->request('GET', "https://nominatim.openstreetmap.org/search?q=" . $place['placeid'] . ",Schweiz&format=json");
+					try {
+						$response = $client->request('GET', "https://nominatim.openstreetmap.org/search?q=" . $place['placeid'] . ",Schweiz&format=json");
+					} catch (GuzzleException $e) {
+						return $e->getMessage();
+					}
 					$body = $response->getBody();
 					// Encodiert den JSON String in ein PHP Array.
 					$file = json_decode($body, JSON_OBJECT_AS_ARRAY);
@@ -66,7 +74,8 @@
 							]);
 						
 						if ($result) {
-							 $places = $place['placeid'] . ' ' . $place['placename'] . ' wurde updated';
+							$places['updated'] = true;
+							 $places['places'][] = $place['placeid'] . ' ' . $place['placename'] . ' wurde updated';
 						}else{
 							throw new PDOException($result->errorInfo());
 						}

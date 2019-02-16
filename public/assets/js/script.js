@@ -1,4 +1,18 @@
 $(document).ready(function () {
+
+  $.getJSON('http://localhost/MarcoSchneiderM151_LB3/students/places/to-update?format=json', function (values) {
+    if (values.length > 0) {
+      M.toast({
+        html: '<span>Es gibt Ortschaften ohne Koordinaten.</span><button class="btn green" id="update-trigger">Update ausführen!</button>',
+        classes: 'orange',
+        displayLength: 10000
+      });
+      $('#update-trigger').on("click", function () {
+        updatePlaces();
+      });
+    }
+  });
+
   let map = new OpenLayers.Map("map");
   let osmLayer = new OpenLayers.Layer.OSM();
   map.addLayer(osmLayer);
@@ -33,5 +47,6 @@ $(document).ready(function () {
       markersLayer.addMarker(marker);
     }
   });
+
   $('.tabs').tabs();
 });

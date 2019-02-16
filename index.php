@@ -28,10 +28,14 @@
 			include "public/view/register.html";
 		});
 		
-		Route::add('/places/update', function () use ($database) {
+		Route::add('/students/places/to-update', function () use ($database) {
 			$placesService = new GetPlacesService($database, new Logger());
-			$updateMessage = $placesService->updatePlaces();
-			echo $updateMessage;
+			$hasPlacesToUpdate = $placesService->getPlacesFromStudentsToUpdate();
+			if ($hasPlacesToUpdate) {
+				echo $hasPlacesToUpdate;
+			} else {
+				echo "Es gibt keine Ortschaften welche keine Kooridinaten haben";
+			}
 		});
 		
 		Route::add('/logout', function () {

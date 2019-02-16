@@ -7,18 +7,21 @@
 		private $studentsModel;
 		private $registerController;
 		private $placesModel;
+		private $placesService;
 		
 		public function __construct(
 			LoginController $loginController,
 			StudentsModel $studentsModel,
 			RegisterController $registerController,
-			PlacesModel $placesModel
+			PlacesModel $placesModel,
+			GetPlacesService $placesService
 		)
 		{
 			$this->loginController = $loginController;
 			$this->studentsModel = $studentsModel;
 			$this->registerController = $registerController;
 			$this->placesModel = $placesModel;
+			$this->placesService = $placesService;
 		}
 		
 		public function getRequest()
@@ -56,6 +59,9 @@
 					break;
 				case 'editStudent':
 					$result = $this->studentsModel->updateStudent($data);
+					break;
+				case 'update-places':
+					$result = $this->placesService->updatePlaces();
 					break;
 			}
 			return $this->sendResponse($result);
