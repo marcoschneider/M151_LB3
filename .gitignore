@@ -1,0 +1,6 @@
+.idea
+public/node_modules/
+vendor
+src/connector.inc.php
+src/log/error_log.txt
+public/lib/ol

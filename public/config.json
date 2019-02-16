@@ -1,0 +1,12 @@
+{
+  "name": "Sass Compiling",
+  "description": "Gulp Sass compling",
+  "bowerDir": "./bower_components",
+  "css": {
+    "file": "m151.styles.scss",
+    "src": [
+      "assets/scss/**/*.scss"
+    ],
+    "dest": "assets/css"
+  }
+}
