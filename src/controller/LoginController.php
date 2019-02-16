@@ -6,7 +6,7 @@
 		private $database;
 		private $logger;
 		
-		public function __construct($database, $logger)
+		public function __construct($database, Logger $logger)
 		{
 			$this->database = $database;
 			$this->logger = $logger;
@@ -52,7 +52,9 @@
 				}
 				catch (PDOException $exception) {
 					$this->logger->writeLog($exception);
+					return false;
 				}
 			}
+			return false;
 		}
 	}

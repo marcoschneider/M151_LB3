@@ -53,6 +53,10 @@
 					break;
 				case 'deleteStudent':
 					$result = $this->studentsModel->deleteStudent($data);
+					break;
+				case 'editStudent':
+					$result = $this->studentsModel->updateStudent($data);
+					break;
 			}
 			return $this->sendResponse($result);
 		}

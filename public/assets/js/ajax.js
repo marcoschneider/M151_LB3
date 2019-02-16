@@ -8,6 +8,20 @@ $(document).ready(function () {
     login();
   });
 
+  $('#save-edit').on("click", function (e) {
+    console.log("clicked");
+    let studentId = $(e.target).data("id");
+    console.log(studentId);
+  });
+
+  $(document).on("click", '.edit-student', function (e) {
+    setupForm(e);
+    $('#save-edit').on("click", function (e) {
+      let studentId = $(e.target).data("id");
+      editStudent(studentId);
+    });
+  });
+
   $(document).on("click", '.delete-student', function (e) {
     let studentId = $(e.target).data("id");
     deleteStudent(studentId);
@@ -22,6 +36,33 @@ $(document).ready(function () {
   })
 });
 
+let setupForm = function(e) {
+  let target = $(e.target);
+  let studentId = target.data("id");
+  let firstname_value = target.parent().siblings()[0].innerText;
+  let lastname_value = target.parent().siblings()[1].innerText;
+  let place_value = target.parent().siblings()[2].innerText;
+  let saveButton = $('#add-student');
+  let firstname = $('#firstname');
+  let lastname = $('#lastname');
+  let place_hidden = $('#autocomplete-input-value');
+  let place = $('#autocomplete-input');
+
+  M.updateTextFields();
+
+  saveButton.replaceWith('<a id="save-edit" class="waves-effect waves-light btn red lighten-1">Speichern</a>');
+  $('#save-edit').attr('data-id', studentId);
+
+  firstname.val(firstname_value);
+  lastname.val(lastname_value);
+  place_hidden.val(place_value);
+  place.val(place_value);
+
+  $([document.documentElement, document.body]).animate({
+    scrollTop: $("#form-top").offset().top
+  }, 1000);
+};
+
 let addStudents = function() {
   let firstname = $('#firstname').val();
   let lastname = $('#lastname').val();
@@ -33,7 +74,7 @@ let addStudents = function() {
     type: 'post',
     data: {json_data: JSON.stringify({
       trigger: 'addStudent',
-      values: values
+      values,
     })},
     success: function (res) {
       if (res === true) {
@@ -105,7 +146,7 @@ function outputStudentsTable(res) {
     output += `<td>${resp.lastname}</td>`;
     output += `<td>${resp.placeid} ${resp.placename}</td>`;
     output += `<td><i data-id="${resp.studentsid}" class="material-icons red-text delete-student">delete</i></td>`;
-    output += `<td><i data-id="${resp.studentsid}" class="material-icons orange-text delete-student">edit</i></td>`;
+    output += `<td><i data-id="${resp.studentsid}" class="material-icons orange-text edit-student">edit</i></td>`;
     output += '</tr>';
   });
   $('#output-table').html(output);
@@ -129,6 +170,35 @@ let deleteStudent = function(studentId) {
       if (res === true) {
         loadStudents();
         toastr.success("Student wurde gelöscht!");
+      }else{
+        toastr.error(res);
+      }
+    },
+    error: function (e) {
+      console.log(e);
+      $('#output-error').html(e.responseText);
+    }
+  })
+};
+
+let editStudent = function(studentId) {
+  let firstname = $('#firstname').val();
+  let lastname = $('#lastname').val();
+  let place = $('#autocomplete-input-value').val();
+  console.log(place);
+  let values = {firstname, lastname, place};
+  $.ajax({
+    url: ajaxUrl,
+    type: 'post',
+    data: {json_data: JSON.stringify({
+        trigger: 'editStudent',
+        studentId,
+        values
+      })},
+    success: function (res) {
+      if (res === true) {
+        loadStudents();
+        toastr.success("Student wurde erfolgreich bearbeitet!");
       }else{
         toastr.error(res);
       }

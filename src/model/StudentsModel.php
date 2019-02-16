@@ -32,7 +32,40 @@ class StudentsModel
 				if ($result) {
 					return true;
 				}else{
-					throw new PDOException("Neuer Benutzer konnte nicht gespeichert werden");
+					throw new PDOException("Neuer Benutzer konnte nicht gespeichert werden " . $result->errorInfo());
+				}
+			}catch (PDOException $e) {
+				$this->logger->writeLog($e->getMessage());
+				return $e->getMessage();
+			}
+		}
+		return $values['error'];
+	}
+	
+	public function updateStudent($data) {
+		$values = $this->studentsController->validateStudentsData($data);
+		if (count($values['error']) === 0) {
+			$sql = "
+			UPDATE students
+				SET
+				firstname = ?,
+				lastname = ?,
+				fk_placeid = ?
+			WHERE
+				studentsid = ?
+		";
+			try{
+				$result = $this->database->prepare($sql)
+					->execute([
+						$values['firstname'],
+						$values['lastname'],
+						$values['plz'],
+						$data->studentId
+					]);
+				if ($result) {
+					return true;
+				}else{
+					throw new PDOException("Neuer Benutzer konnte nicht gespeichert werden " . $result->errorInfo());
 				}
 			}catch (PDOException $e) {
 				return $e->getMessage();
