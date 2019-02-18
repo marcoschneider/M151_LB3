@@ -1,12 +1,14 @@
 <?php
 	
+	require_once "SessionManager.php";
+	
 	class LoginController
 	{
 
 		private $database;
 		private $logger;
 		
-		public function __construct($database, Logger $logger)
+		public function __construct(PDO $database, Logger $logger)
 		{
 			$this->database = $database;
 			$this->logger = $logger;
@@ -14,8 +16,8 @@
 		
 		private function validateLoginForm($data) {
 			if ($data->email != '' && $data->password != '') {
-				$email = $data->email;
-				$password = hash('sha512', $data->password);
+				$email = htmlspecialchars($data->email);
+				$password = hash('sha512', htmlspecialchars($data->password));
 				
 				return [
 					'email' => $email,
@@ -29,16 +31,20 @@
 			$values = $this->validateLoginForm($data);
 
 			if ($values != false) {
-				$sql = "
+				$sql = '
 				SELECT
       	 	id,
 				 	email
-				FROM users
-				WHERE email = '" . $values['email'] . "'
-				AND pass = '" . $values['password'] . "'";
+				FROM m_151_studentmap.users
+				WHERE email = ?
+				AND pass = ?';
 
 				try {
-					$stmt = $this->database->query($sql);
+					$stmt = $this->database->prepare($sql);
+					$stmt->execute([
+						$values['email'],
+						$values['password'],
+					]);
 					$stmt->setFetchMode(PDO::FETCH_ASSOC);
 					$result = $stmt->fetch();
 					if (is_array($result)) {

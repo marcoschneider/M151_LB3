@@ -31,7 +31,7 @@
 		 *
 		 * @param Logger $logger
 		 */
-		public function __construct($database, Logger $logger)
+		public function __construct(PDO $database, Logger $logger)
 		{
 			$this->database = $database;
 			$this->logger = $logger;
@@ -45,13 +45,13 @@
 		 */
 		public function getAllPlaces() {
 			$sql = "
-			SELECT
-				placeid,
-				placename,
-				latitude,
-			  longitude
-			FROM place
-		";
+				SELECT
+					placeid,
+					placename,
+					latitude,
+					longitude
+				FROM m_151_studentmap.place
+			";
 			
 			$query = $this->database->query($sql);
 			$query->setFetchMode(PDO::FETCH_ASSOC);

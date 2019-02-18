@@ -6,29 +6,55 @@
 	 * Time: 23:19
 	 */
 	
+	require_once "SessionManager.php";
+	
 	class StudentsController
 	{
-		public function __construct()
-		{
+		private $studentsModel;
+		
+		public function __construct(StudentsModel $studentsModel) {
+			$this->studentsModel = $studentsModel;
+		}
+		
+		public function getAllStudents() {
+			return $this->studentsModel->getAllStudents();
+		}
+		
+		public function addStudent($data) {
+			$values = $this->validateStudentsData($data);
+			return $this->studentsModel->addStudent($values);
+		}
+		
+		public function updateStudent($data) {
+			$values = $this->validateStudentsData($data);
+			return $this->studentsModel->updateStudent($values);
+		}
+		
+		public function deleteStudent($data) {
+			return $this->studentsModel->deleteStudent($data);
 		}
 		
 		public function validateStudentsData($data) {
-			$data = $data->values;
+			$form_values = $data->values;
 			$values = ['error' =>[]];
-			if ($data->firstname != '') {
-				$values['firstname'] = htmlspecialchars($data->firstname);
+			if ($form_values->firstname != '') {
+				$values['firstname'] = htmlspecialchars($form_values->firstname);
 			}else{
 				$values['error'][] = "Vorname nicht angegeben";
 			}
 			
-			if ($data->lastname != '') {
-				$values['lastname'] = htmlspecialchars($data->lastname);
+			if ($form_values->lastname != '') {
+				$values['lastname'] = htmlspecialchars($form_values->lastname);
 			}else{
 				$values['error'][] = "Nachname nicht angegeben";
 			}
 			
-			if ($data->place != '') {
-				$place = htmlspecialchars($data->place);
+			if (isset($data->studentId)) {
+				$values['studentid'] = htmlspecialchars($data->studentId);
+			}
+			
+			if ($form_values->place != '') {
+				$place = htmlspecialchars($form_values->place);
 				$place = explode(' ', $place);
 				$values['plz'] = $place[0];
 			}else{

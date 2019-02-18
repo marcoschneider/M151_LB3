@@ -1,26 +1,28 @@
 <?php
 	
+	require_once "SessionManager.php";
+	
 	class Ajax
 	{
 		
 		private $loginController;
-		private $studentsModel;
+		private $studentController;
 		private $registerController;
-		private $placesModel;
+		private $placesController;
 		private $placesService;
 		
 		public function __construct(
 			LoginController $loginController,
-			StudentsModel $studentsModel,
+			StudentsController $studentController,
 			RegisterController $registerController,
-			PlacesModel $placesModel,
+			PlacesController $placesController,
 			GetPlacesService $placesService
 		)
 		{
 			$this->loginController = $loginController;
-			$this->studentsModel = $studentsModel;
+			$this->studentController = $studentController;
 			$this->registerController = $registerController;
-			$this->placesModel = $placesModel;
+			$this->placesController = $placesController;
 			$this->placesService = $placesService;
 		}
 		
@@ -46,22 +48,26 @@
 					$result = $this->registerController->register($data);
 					break;
 				case 'getAllStudents':
-					$result = $this->studentsModel->getAllStudents();
+					$result = $this->studentController->getAllStudents();
 					break;
 				case 'getAllPlaces':
-					$result = $this->placesModel->getAllPlaces();
+					$result = $this->placesController->getAllPlaces();
 					break;
 				case 'addStudent':
-					$result = $this->studentsModel->addStudent($data);
+					$result = $this->studentController->addStudent($data);
 					break;
 				case 'deleteStudent':
-					$result = $this->studentsModel->deleteStudent($data);
+					$result = $this->studentController->deleteStudent($data);
 					break;
 				case 'editStudent':
-					$result = $this->studentsModel->updateStudent($data);
+					$result = $this->studentController->updateStudent($data);
 					break;
 				case 'update-places':
 					$result = $this->placesService->updatePlaces();
+					break;
+				case 'sadlkfjalfjsdalfj':
+					SessionManager::startSession();
+					$result = SessionManager::isSessionSet();
 					break;
 			}
 			return $this->sendResponse($result);

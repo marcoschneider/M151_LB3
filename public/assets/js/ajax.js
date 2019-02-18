@@ -1,5 +1,18 @@
 let ajaxUrl = 'src/requestHandler.php';
 $(document).ready(function () {
+
+  getSession(function (res) {
+    if (res) {
+      $('#login').text('Logout');
+      $('#login').attr('href', 'logout');
+    } else {
+      $('#container-students').html(`<h3 class="center-align">
+      Du bist im Moment nicht angemeldet. Melde dich zuerst an um Studenten zu erfassen :)
+    </h3>`);
+    }
+  });
+
+
   $('#autocomplete-input').on('focus', function (e) {
     getAllPlaces();
   });
@@ -9,9 +22,7 @@ $(document).ready(function () {
   });
 
   $('#save-edit').on("click", function (e) {
-    console.log("clicked");
     let studentId = $(e.target).data("id");
-    console.log(studentId);
   });
 
   $(document).on("click", '.edit-student', function (e) {
@@ -35,6 +46,19 @@ $(document).ready(function () {
     register();
   });
 });
+
+let getSession = (callback) => {
+  $.ajax({
+    url: ajaxUrl,
+    type: 'post',
+    data: {json_data: JSON.stringify({
+        trigger: 'sadlkfjalfjsdalfj'
+      })},
+    success:function (res) {
+      callback(res);
+    }
+  });
+};
 
 let updatePlaces = function() {
   $.ajax({
@@ -270,7 +294,9 @@ let login = function () {
       password: password
     })},
     success:function (res) {
-      if (res !== true) {
+      if (res === true) {
+        window.location.href = '/MarcoSchneiderM151_LB3';
+      } else {
         M.toast({
           html: "Benutzername oder Passwort falsch",
           classes: 'red'

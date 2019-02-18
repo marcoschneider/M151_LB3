@@ -9,16 +9,17 @@
 	require "controller/LoginController.php";
 	require "controller/RegisterController.php";
 	require "controller/StudentsController.php";
+	require "controller/PlacesController.php";
 	require "model/StudentsModel.php";
 	require "model/PlacesModel.php";
-	
+
 	$logger = new Logger();
 	if (is_object($database)) {
 		$ajax = new Ajax(
 			new LoginController($database, $logger),
-			new StudentsModel($database, new StudentsController(), $logger),
+			new StudentsController(new StudentsModel($database, $logger)),
 			new RegisterController($database, $logger),
-			new PlacesModel($database, $logger),
+			new PlacesController(new PlacesModel($database, $logger)),
 			new GetPlacesService($database, $logger)
 		);
 		$result = $ajax->getRequest();

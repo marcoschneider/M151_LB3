@@ -1,26 +1,25 @@
 <?php
-
-class StudentsModel
-{
+	
+class StudentsModel {
+	
 	private $database;
-	private $studentsController;
 	private $logger;
 	
-	public function __construct($database, StudentsController $studentsController, Logger $logger)
+	public function __construct(PDO $database, Logger $logger)
 	{
 		$this->database = $database;
-		$this->studentsController = $studentsController;
 		$this->logger = $logger;
 	}
 	
-	public function addStudent($data)
+	public function addStudent($values)
 	{
-		$values = $this->studentsController->validateStudentsData($data);
+		SessionManager::startSession();
+		$values['userid'] = SessionManager::getUserSession()['id'];
 		if (count($values['error']) === 0) {
 			$sql = "
 			INSERT INTO
-				students(firstname, lastname, fk_placeid)
-				VALUES (?, ?, ?)
+				students(firstname, lastname, fk_placeid, fk_user)
+				VALUES (?, ?, ?, ?)
 		";
 			try{
 				$result = $this->database->prepare($sql)
@@ -28,6 +27,7 @@ class StudentsModel
 						$values['firstname'],
 						$values['lastname'],
 						$values['plz'],
+						$values['userid'],
 					]);
 				if ($result) {
 					return true;
@@ -42,8 +42,9 @@ class StudentsModel
 		return $values['error'];
 	}
 	
-	public function updateStudent($data) {
-		$values = $this->studentsController->validateStudentsData($data);
+	public function updateStudent($values) {
+		SessionManager::startSession();
+		$studentid = SessionManager::getUserSession()['id'];
 		if (count($values['error']) === 0) {
 			$sql = "
 			UPDATE students
@@ -53,6 +54,8 @@ class StudentsModel
 				fk_placeid = ?
 			WHERE
 				studentsid = ?
+			AND
+				fk_user = ?
 		";
 			try{
 				$result = $this->database->prepare($sql)
@@ -60,7 +63,8 @@ class StudentsModel
 						$values['firstname'],
 						$values['lastname'],
 						$values['plz'],
-						$data->studentId
+						$values['studentid'],
+						$studentid,
 					]);
 				if ($result) {
 					return true;
@@ -76,6 +80,8 @@ class StudentsModel
 	
 	public function getAllStudents()
 	{
+		SessionManager::startSession();
+		$studentid = SessionManager::getUserSession()['id'];
 		$sql = "
 			SELECT
 				studentsid,
@@ -85,11 +91,15 @@ class StudentsModel
 				p.placeid,
 				p.latitude,
 				p.longitude
-			FROM students
+			FROM m_151_studentmap.students
 			INNER JOIN place p on students.fk_placeid = p.placeid
+			WHERE fk_user = ?
 		";
 		
-		$stmt = $this->database->query($sql);
+		$stmt = $this->database->prepare($sql);
+		$stmt->execute([
+			$studentid
+		]);
 		$stmt->setFetchMode(PDO::FETCH_ASSOC);
 		$result = $stmt->fetchAll();
 		if ($result) {
@@ -100,13 +110,16 @@ class StudentsModel
 	
 	public function deleteStudent($data)
 	{
+		SessionManager::startSession();
+		$studentid = SessionManager::getUserSession()['id'];
 		$sql = '
-			DELETE FROM students WHERE studentsid = ?
+			DELETE FROM students WHERE studentsid = ? AND fk_user = ?
 		';
 		try {
 			$stmt = $this->database->prepare($sql);
 			$stmt->execute([
-				$data->studentid
+				$data->studentid,
+				$studentid,
 			]);
 			
 			if ($stmt) {

@@ -13,7 +13,7 @@
 		
 		private $logger;
 		
-		public function __construct($database, Logger $logger)
+		public function __construct(PDO $database, Logger $logger)
 		{
 			$this->database = $database;
 			$this->logger = $logger;
@@ -51,7 +51,7 @@
 			
 			if (!isset($values['error'])) {
 				$sql = '
-					INSERT INTO users(email, pass) VALUES (?,?)';
+					INSERT INTO "m_151_studentmap"."users"(email, pass) VALUES (?,?)';
 				try{
 					$stmt = $this->database->prepare($sql);
 					$stmt->execute([

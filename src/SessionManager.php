@@ -21,14 +21,23 @@
 			session_destroy();
 		}
 		
-		public function __get($name)
-		{
-			return $_SESSION[$name];
+		public static function getUserSession() {
+			if (isset($_SESSION['kernel']['user'])){
+				return $_SESSION['kernel']['user'];
+			}
+			return false;
 		}
 		
 		public static function getToken() {
 			if (isset($_SESSION['kernel'])) {
 				return $_SESSION['kernel']['token'];
+			}
+			return false;
+		}
+		
+		public static function isSessionSet() {
+			if (!empty($_SESSION)) {
+				return true;
 			}
 			return false;
 		}
