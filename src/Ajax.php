@@ -53,6 +53,9 @@
 				case 'getAllPlaces':
 					$result = $this->placesController->getAllPlaces();
 					break;
+				case 'addPlace':
+					$result = $this->placesController->addPlace($data);
+					break;
 				case 'addStudent':
 					$result = $this->studentController->addStudent($data);
 					break;

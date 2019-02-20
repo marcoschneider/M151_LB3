@@ -37,6 +37,10 @@ $(document).ready(function () {
     let studentId = $(e.target).data("id");
   });
 
+  $('#add-place').on("click", function (e) {
+    addPlace();
+  });
+
   $(document).on("click", '.edit-student', function (e) {
     setupForm(e);
     $('#save-edit').on("click", function (e) {
@@ -124,6 +128,35 @@ let setupForm = function(e) {
   $([document.documentElement, document.body]).animate({
     scrollTop: $("#form-top").offset().top
   }, 1000);
+};
+
+let addPlace = function() {
+ let placename = $('#placename').val();
+ let placeid = $('#plz').val();
+
+ $.ajax({
+   url: ajaxUrl,
+   type: 'post',
+   data: {json_data: JSON.stringify({
+       trigger: 'addPlace',
+       placename,
+       placeid
+     })},
+   success: function (res) {
+     if (res === true) {
+
+     }else{
+       M.toast({
+         html: res,
+         classes: 'red'
+       });
+     }
+   },
+   error: function (e) {
+     console.log(e);
+     $('#output-error').html(e.responseText);
+   }
+ });
 };
 
 let addStudents = function() {

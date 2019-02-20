@@ -33,6 +33,10 @@
 			include "public/view/register.html";
 		});
 		
+		Route::add('/places', function () {
+			include "public/view/places.html";
+		});
+		
 		Route::add('/students/places/to-update', function () use ($database) {
 			$placesService = new GetPlacesService($database, new Logger());
 			$hasPlacesToUpdate = $placesService->getPlacesFromStudentsToUpdate();

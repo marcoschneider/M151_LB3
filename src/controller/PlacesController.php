@@ -20,4 +20,20 @@
 			return $this->placesModel->getAllPlaces();
 		}
 		
+		public function addPlace($data) {
+			$data = $this->checkAddPlaceForm($data);
+			return $this->placesModel->addPlace($data);
+		}
+		
+		public function checkAddPlaceForm($data) {
+			$values = ['error' => []];
+			if ($data->placename === '' && $data->placeid === '') {
+				$values['error'][] = "Mindestens ein Feld ausfüllen!";
+			} else {
+				$values['placename'] = htmlspecialchars($data->placename);
+				$values['placeid'] = htmlspecialchars($data->placeid);
+			}
+			return $values;
+		}
+		
 	}
