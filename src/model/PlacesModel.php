@@ -23,6 +23,8 @@
 		 */
 		private $logger;
 		
+		private $connection;
+		
 		/**
 		 * PlacesModel constructor.
 		 *
@@ -31,9 +33,10 @@
 		 *
 		 * @param Logger $logger
 		 */
-		public function __construct(PDO $database, Logger $logger)
+		public function __construct(Database $database, Logger $logger)
 		{
 			$this->database = $database;
+			$this->connection = $database->connection;
 			$this->logger = $logger;
 		}
 		
@@ -50,10 +53,10 @@
 					placename,
 					latitude,
 					longitude
-				FROM m_151_studentmap.place
+				FROM {drivers_schema_name}.place
 			";
-			
-			$query = $this->database->query($sql);
+			$sql = str_replace('{drivers_schema_name}', $this->database->schema_name, $sql);
+			$query = $this->connection->query($sql);
 			$query->setFetchMode(PDO::FETCH_ASSOC);
 			$results = $query->fetchAll();
 			

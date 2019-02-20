@@ -7,11 +7,12 @@
 	{
 		
 		private $database;
-		
 		private $logger;
+		private $connection;
 		
-		public function __construct($database,Logger $logger)
+		public function __construct(Database $database,Logger $logger)
 		{
+			$this->connection = $database->connection;
 			$this->database = $database;
 			$this->logger = $logger;
 		}
@@ -21,21 +22,22 @@
 				SELECT
 					place.placeid,
 					place.placename
-				FROM place
-				INNER JOIN students s on place.placeid = s.fk_placeid
+				FROM {drivers_schema_name}.place
+				INNER JOIN {drivers_schema_name}.students s on {drivers_schema_name}.place.placeid = s.fk_placeid
 				WHERE s.fk_placeid = place.placeid
 					AND place.latitude = 0
 					AND place.longitude = 0
 			';
-			$stmt = $this->database->query($sql);
+			$sql = str_replace('{drivers_schema_name}', $this->database->schema_name, $sql);
+			$stmt = $this->connection->query($sql);
 			$places = $stmt->fetchAll();
-			if ($places) {
+			if (!empty($places)) {
 				if (isset($_GET['format']) && $_GET['format'] === 'json') {
 					return json_encode($places);
 				}
 				return $places;
 			}
-			return false;
+			return json_encode($places);
 		}
 		
 		public function updatePlaces() {
@@ -59,14 +61,15 @@
 					$lon = $file[0]['lon'];
 					
 					$sql = "
-						UPDATE place
+						UPDATE {drivers_schema_name}.place
 							SET
 								latitude = ?,
 								longitude = ?
 						WHERE placeid = ?
 					";
+					$sql = str_replace('{drivers_schema_name}', $this->database->schema_name, $sql);
 					try{
-						$result = $this->database->prepare($sql)
+						$result = $this->connection->prepare($sql)
 							->execute([
 								$lat,
 								$lon,

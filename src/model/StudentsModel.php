@@ -3,11 +3,13 @@
 class StudentsModel {
 	
 	private $database;
+	private $connection;
 	private $logger;
 	
-	public function __construct(PDO $database, Logger $logger)
+	public function __construct(Database $database, Logger $logger)
 	{
 		$this->database = $database;
+		$this->connection = $database->connection;
 		$this->logger = $logger;
 	}
 	
@@ -18,11 +20,12 @@ class StudentsModel {
 		if (count($values['error']) === 0) {
 			$sql = "
 			INSERT INTO
-				students(firstname, lastname, fk_placeid, fk_user)
+				{drivers_schema_name}.students(firstname, lastname, fk_placeid, fk_user)
 				VALUES (?, ?, ?, ?)
 		";
+			$sql = str_replace('{drivers_schema_name}', $this->database->schema_name, $sql);
 			try{
-				$result = $this->database->prepare($sql)
+				$result = $this->connection->prepare($sql)
 					->execute([
 						$values['firstname'],
 						$values['lastname'],
@@ -47,18 +50,19 @@ class StudentsModel {
 		$studentid = SessionManager::getUserSession()['id'];
 		if (count($values['error']) === 0) {
 			$sql = "
-			UPDATE students
+			UPDATE {drivers_schema_name}.students
 				SET
-				firstname = ?,
-				lastname = ?,
-				fk_placeid = ?
+					firstname = ?,
+					lastname = ?,
+					fk_placeid = ?
 			WHERE
 				studentsid = ?
 			AND
 				fk_user = ?
 		";
+			$sql = str_replace('{drivers_schema_name}', $this->database->schema_name, $sql);
 			try{
-				$result = $this->database->prepare($sql)
+				$result = $this->connection->prepare($sql)
 					->execute([
 						$values['firstname'],
 						$values['lastname'],
@@ -91,12 +95,12 @@ class StudentsModel {
 				p.placeid,
 				p.latitude,
 				p.longitude
-			FROM m_151_studentmap.students
-			INNER JOIN place p on students.fk_placeid = p.placeid
+			FROM {drivers_schema_name}.students
+			INNER JOIN {drivers_schema_name}.place p on {drivers_schema_name}.students.fk_placeid = p.placeid
 			WHERE fk_user = ?
 		";
-		
-		$stmt = $this->database->prepare($sql);
+		$sql = str_replace('{drivers_schema_name}', $this->database->schema_name, $sql);
+		$stmt = $this->connection->prepare($sql);
 		$stmt->execute([
 			$studentid
 		]);
@@ -113,10 +117,11 @@ class StudentsModel {
 		SessionManager::startSession();
 		$studentid = SessionManager::getUserSession()['id'];
 		$sql = '
-			DELETE FROM students WHERE studentsid = ? AND fk_user = ?
+			DELETE FROM {drivers_schema_name}.students WHERE studentsid = ? AND fk_user = ?
 		';
+		$sql = str_replace('{drivers_schema_name}', $this->database->schema_name, $sql);
 		try {
-			$stmt = $this->database->prepare($sql);
+			$stmt = $this->connection->prepare($sql);
 			$stmt->execute([
 				$data->studentid,
 				$studentid,

@@ -2,6 +2,8 @@
 	
 	class Logger
 	{
+		public function __construct() {}
+		
 		public function writeLog($message){
 			
 			$message = $message.PHP_EOL.date('dd.mm.yyyy', time()).PHP_EOL;

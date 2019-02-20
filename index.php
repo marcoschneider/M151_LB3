@@ -1,14 +1,19 @@
 <?php
 	
+	define('TYPE_MYSQL', 'mysql');
+	define('TYPE_POSTGRES', 'postgres');
+	
 	require "vendor/autoload.php";
 	require "Route.php";
 	require "src/SessionManager.php";
 	require "src/service/GetPlacesService.php";
-	require "src/connector.inc.php";
+	require "src/database/Database.php";
 	require "src/Logger.php";
 	require "src/Config.php";
-	
 	SessionManager::startSession();
+	
+	$database = new Database();
+	$database->connect(TYPE_POSTGRES);
 	
 	if (is_object($database)) {
 		Route::add('/', function () {
@@ -31,11 +36,7 @@
 		Route::add('/students/places/to-update', function () use ($database) {
 			$placesService = new GetPlacesService($database, new Logger());
 			$hasPlacesToUpdate = $placesService->getPlacesFromStudentsToUpdate();
-			if ($hasPlacesToUpdate) {
-				echo $hasPlacesToUpdate;
-			} else {
-				echo "Es gibt keine Ortschaften welche keine Kooridinaten haben";
-			}
+			echo $hasPlacesToUpdate;
 		});
 		
 		Route::add('/logout', function () {

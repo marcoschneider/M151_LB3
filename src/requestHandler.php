@@ -1,10 +1,14 @@
 <?php
 	
+	define('TYPE_MYSQL', 'mysql');
+	define('TYPE_POSTGRES', 'postgres');
+	
 	// Includes
 	require "../vendor/autoload.php";
 	require "Ajax.php";
 	require "Logger.php";
-	require "connector.inc.php";
+	require "Config.php";
+	require "database/Database.php";
 	require "service/GetPlacesService.php";
 	require "controller/LoginController.php";
 	require "controller/RegisterController.php";
@@ -12,6 +16,9 @@
 	require "controller/PlacesController.php";
 	require "model/StudentsModel.php";
 	require "model/PlacesModel.php";
+	
+	$database = new Database();
+	$database->connect(TYPE_POSTGRES);
 
 	$logger = new Logger();
 	if (is_object($database)) {

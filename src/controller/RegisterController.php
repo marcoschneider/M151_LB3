@@ -10,12 +10,13 @@
 	{
 		
 		private $database;
-		
+		private $connection;
 		private $logger;
 		
-		public function __construct(PDO $database, Logger $logger)
+		public function __construct(Database $database, Logger $logger)
 		{
 			$this->database = $database;
+			$this->connection = $database->connection;
 			$this->logger = $logger;
 		}
 		
@@ -51,9 +52,10 @@
 			
 			if (!isset($values['error'])) {
 				$sql = '
-					INSERT INTO "m_151_studentmap"."users"(email, pass) VALUES (?,?)';
+					INSERT INTO {drivers_schema_name}.users (email, pass) VALUES (?,?)';
+				$sql = str_replace('{drivers_schema_name}', $this->database->schema_name, $sql);
 				try{
-					$stmt = $this->database->prepare($sql);
+					$stmt = $this->connection->prepare($sql);
 					$stmt->execute([
 						$values['email'],
 						$values['password']

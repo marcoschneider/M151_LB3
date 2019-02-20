@@ -6,10 +6,12 @@
 	{
 
 		private $database;
+		private $connection;
 		private $logger;
 		
-		public function __construct(PDO $database, Logger $logger)
+		public function __construct(Database $database, Logger $logger)
 		{
+			$this->connection = $database->connection;
 			$this->database = $database;
 			$this->logger = $logger;
 		}
@@ -35,12 +37,12 @@
 				SELECT
       	 	id,
 				 	email
-				FROM m_151_studentmap.users
+				FROM {drivers_schema_name}.users
 				WHERE email = ?
 				AND pass = ?';
-
+				$sql = str_replace('{drivers_schema_name}', $this->database->schema_name, $sql);
 				try {
-					$stmt = $this->database->prepare($sql);
+					$stmt = $this->connection->prepare($sql);
 					$stmt->execute([
 						$values['email'],
 						$values['password'],

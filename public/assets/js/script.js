@@ -4,8 +4,8 @@ $(document).ready(function () {
   let osmLayer = new OpenLayers.Layer.OSM();
   map.addLayer(osmLayer);
 
-  let centerLat = 46.8517;
-  let centerLon = 9.52585;
+  let centerLat = 46.621081;
+  let centerLon = 8.1596857;
   let zoom = 8;
 
   let fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
@@ -48,7 +48,12 @@ $(document).ready(function () {
           });
           $('#update-trigger').on("click", function () {
             updatePlaces();
+            setTimeout(function () {
+              location.reload();
+            }, 1000);
           });
+        } else {
+          location.reload();
         }
       });
     }, 100);

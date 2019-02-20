@@ -6,9 +6,21 @@ $(document).ready(function () {
       $('#login').text('Logout');
       $('#login').attr('href', 'logout');
     } else {
-      $('#container-students').html(`<h3 class="center-align">
-      Du bist im Moment nicht angemeldet. Melde dich zuerst an um Studenten zu erfassen :)
-    </h3>`);
+      $('#container-students')
+        .html(`<div class="row">
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">Nicht angemeldet</span>
+              <p>Du hast momentan keine aktive Sitzung am laufen. Melde dich an, um alle
+              Funktionen der Webseite auszutesten.</p>
+            </div>
+            <div class="card-action">
+              <a href="login">Login</a>
+            </div>
+          </div>
+        </div>
+      </div>`);
     }
   });
 
