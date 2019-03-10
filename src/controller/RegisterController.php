@@ -52,13 +52,14 @@
 			
 			if (!isset($values['error'])) {
 				$sql = '
-					INSERT INTO {drivers_schema_name}.users (email, pass) VALUES (?,?)';
+					INSERT INTO {drivers_schema_name}.users (email, pass, role) VALUES (?,?)';
 				$sql = str_replace('{drivers_schema_name}', $this->database->schema_name, $sql);
 				try{
 					$stmt = $this->connection->prepare($sql);
 					$stmt->execute([
 						$values['email'],
-						$values['password']
+						$values['password'],
+						'content creator'
 					]);
 
 					if ($stmt) {

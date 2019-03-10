@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="public/node_modules/materialize-css/dist/css/materialize.min.css" />
+	<link rel="stylesheet" href="public/assets/css/m151.styles.css" />
+	<link href="favicon.png" rel="icon" type="image/x-icon" />
+	<link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+	<title>Ortschaften</title>
+</head>
+<body>
+<nav>
+	<div class="nav-wrapper red darken-2">
+		<a href="/MarcoSchneiderM151_LB3" class="brand-logo">
+			<img class="logo" alt="Logo" src="logo.svg"/>
+		</a>
+	</div>
+</nav>
+<div class="container">
+	<h3>Benutzerliste</h3>
+	<div class="row">
+		<div class="col s12">
+			<table class="striped">
+				<thead>
+				<tr>
+					<th>#</th>
+					<th>E-Mail</th>
+					<th>Rolle</th>
+				</tr>
+				</thead>
+				<tbody id="output-users"></tbody>
+			</table>
+		</div>
+	</div>
+	<div id="output-error"></div>
+</div>
+<script src="public/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="public/node_modules/materialize-css/dist/js/materialize.min.js"></script>
+<script src="public/lib/ol/OpenLayers.js"></script>
+<script src="public/assets/js/ajax.js"></script>
+</body>
+</html>

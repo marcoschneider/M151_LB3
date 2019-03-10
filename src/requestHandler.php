@@ -8,17 +8,18 @@
 	require "Ajax.php";
 	require "Logger.php";
 	require "Config.php";
-	require "database/Database.php";
 	require "service/GetPlacesService.php";
 	require "controller/LoginController.php";
 	require "controller/RegisterController.php";
 	require "controller/StudentsController.php";
 	require "controller/PlacesController.php";
+	require "controller/UserController.php";
 	require "model/StudentsModel.php";
 	require "model/PlacesModel.php";
+	require "model/UserModel.php";
 	
-	$database = new Database();
-	$database->connect(TYPE_POSTGRES);
+	$database = Config::getConnection(TYPE_MYSQL);
+	$database->connect();
 
 	$logger = new Logger();
 	if (is_object($database)) {
@@ -27,7 +28,8 @@
 			new StudentsController(new StudentsModel($database, $logger)),
 			new RegisterController($database, $logger),
 			new PlacesController(new PlacesModel($database, $logger)),
-			new GetPlacesService($database, $logger)
+			new GetPlacesService($database, $logger),
+			new UserController(new UserModel($database, $logger))
 		);
 		$result = $ajax->getRequest();
 		echo $result;

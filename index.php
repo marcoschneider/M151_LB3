@@ -1,5 +1,4 @@
 <?php
-	
 	define('TYPE_MYSQL', 'mysql');
 	define('TYPE_POSTGRES', 'postgres');
 	
@@ -7,13 +6,12 @@
 	require "Route.php";
 	require "src/SessionManager.php";
 	require "src/service/GetPlacesService.php";
-	require "src/database/Database.php";
 	require "src/Logger.php";
 	require "src/Config.php";
 	SessionManager::startSession();
 	
-	$database = new Database();
-	$database->connect(TYPE_POSTGRES);
+	$database = Config::getConnection(TYPE_MYSQL);
+	$database->connect();
 	
 	if (is_object($database)) {
 		Route::add('/', function () {
@@ -33,7 +31,7 @@
 			include "public/view/register.html";
 		});
 		
-		Route::add('/places', function () {
+			Route::add('/places', function () {
 			include "public/view/places.html";
 		});
 		
@@ -46,6 +44,12 @@
 		Route::add('/logout', function () {
 			SessionManager::closeSession();
 			header('Location: login');
+		});
+		
+		Route::add('/users', function () {
+			if (SessionManager::isSessionSet()) {
+				include "public/view/users.html";
+			}
 		});
 	}
 	else {

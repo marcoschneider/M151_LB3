@@ -1,8 +1,12 @@
 let ajaxUrl = 'src/requestHandler.php';
 $(document).ready(function () {
 
+  if (location.pathname === '/MarcoSchneiderM151_LB3/users') {
+    getAllUsers();
+  }
+
   getSession(function (res) {
-    if (res) {
+    if (res.length !== 0) {
       $('#login').text('Logout');
       $('#login').attr('href', 'logout');
     } else {
@@ -24,17 +28,12 @@ $(document).ready(function () {
     }
   });
 
-
   $('#autocomplete-input').on('focus', function (e) {
     getAllPlaces();
   });
 
   $('#login').on("click", function () {
     login();
-  });
-
-  $('#save-edit').on("click", function (e) {
-    let studentId = $(e.target).data("id");
   });
 
   $('#add-place').on("click", function (e) {
@@ -68,12 +67,27 @@ let getSession = (callback) => {
     url: ajaxUrl,
     type: 'post',
     data: {json_data: JSON.stringify({
-        trigger: 'sadlkfjalfjsdalfj'
+        trigger: 'get-session'
       })},
     success:function (res) {
       callback(res);
     }
   });
+};
+
+let getAllUsers = () => {
+  $.ajax({
+    type: 'POST',
+    url: ajaxUrl,
+    data: {
+      json_data: JSON.stringify({
+        trigger: 'getAllUsers'
+      })
+    },
+    success: function (res) {
+      outputUsersTable(res);
+    }
+  })
 };
 
 let updatePlaces = function() {
@@ -237,8 +251,6 @@ let getAllStudents = function(callback) {
   });
 };
 
-
-
 function outputStudentsTable(res) {
   let output = '';
   if (res.length === 0) {
@@ -253,7 +265,28 @@ function outputStudentsTable(res) {
     output += `<td><i data-id="${resp.studentsid}" class="material-icons orange-text edit-student">edit</i></td>`;
     output += '</tr>';
   });
-  $('#output-table').html(output);
+  $('#output-students').html(output);
+}
+
+function outputUsersTable(response) {
+  getSession(function (res) {
+    let output = '';
+    if (res.kernel.user.role === 'admin') {
+      if (res.length === 0) {
+        output = '<h5>Keine Benutzer erfasst</h5>';
+      }
+      $.each(response, function (key, resp) {
+        output += '<tr>';
+        output += `<td>${resp.id}</td>`;
+        output += `<td>${resp.email}</td>`;
+        output += `<td>${resp.role}</td>`;
+        output += '</tr>';
+      });
+    } else {
+      output = '<h5>Du bist kein Admin und kannst die Liste der Benutzer nicht ansehen.</h5>'
+    }
+    $('#output-users').html(output);
+  });
 }
 
 function loadStudents() {

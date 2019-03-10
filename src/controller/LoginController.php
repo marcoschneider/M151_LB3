@@ -36,7 +36,8 @@
 				$sql = '
 				SELECT
       	 	id,
-				 	email
+				 	email,
+					role
 				FROM {drivers_schema_name}.users
 				WHERE email = ?
 				AND pass = ?';

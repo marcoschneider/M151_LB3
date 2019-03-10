@@ -51,11 +51,18 @@
 				$body = $response->getBody();
 				$places = json_decode($body, JSON_OBJECT_AS_ARRAY);
 				
+				var_dump($places);
+				
 				$sql = "
 				INSERT INTO {drivers_schema_name}.place(placeid, placename, latitude, longitude)
 				VALUES (?,?,?,?)
 			";
 				$sql = str_replace('{drivers_schema_name}', $this->database->schema_name, $sql);
+				
+				$stmt = $this->database->connection->preprare($sql);
+				$stmt->execute([
+					$places[0]
+				]);
 			}
 			return $data['error'];
 		}

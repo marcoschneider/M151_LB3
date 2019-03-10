@@ -9,6 +9,7 @@
 		private $studentController;
 		private $registerController;
 		private $placesController;
+		private $userController;
 		private $placesService;
 		
 		public function __construct(
@@ -16,7 +17,8 @@
 			StudentsController $studentController,
 			RegisterController $registerController,
 			PlacesController $placesController,
-			GetPlacesService $placesService
+			GetPlacesService $placesService,
+			UserController $userController
 		)
 		{
 			$this->loginController = $loginController;
@@ -24,6 +26,7 @@
 			$this->registerController = $registerController;
 			$this->placesController = $placesController;
 			$this->placesService = $placesService;
+			$this->userController = $userController;
 		}
 		
 		public function getRequest()
@@ -53,6 +56,9 @@
 				case 'getAllPlaces':
 					$result = $this->placesController->getAllPlaces();
 					break;
+				case 'getAllUsers':
+					$result = $this->userController->getAllUsers();
+					break;
 				case 'addPlace':
 					$result = $this->placesController->addPlace($data);
 					break;
@@ -68,9 +74,9 @@
 				case 'update-places':
 					$result = $this->placesService->updatePlaces();
 					break;
-				case 'sadlkfjalfjsdalfj':
+				case 'get-session':
 					SessionManager::startSession();
-					$result = SessionManager::isSessionSet();
+					$result = SessionManager::getCurrentSession();
 					break;
 			}
 			return $this->sendResponse($result);
