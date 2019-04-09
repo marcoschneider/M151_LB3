@@ -1,5 +1,5 @@
-# M151_LB3
-This a school project.
+# Studentsmap
+This a studentsmap where you can insert new students to a user. The project was made as a end project. It represents the 5 architecture model.
 
 ## Installation
 1. Clone this project and `cd to/project/root`
